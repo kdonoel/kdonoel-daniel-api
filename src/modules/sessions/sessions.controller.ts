@@ -1,5 +1,4 @@
-import { N9Error } from '@neo9/n9-node-utils';
-import { Body, Inject, JsonController, N9Log, Post, Service } from 'n9-node-routing';
+import { Body, Inject, JsonController, N9Error, N9Log, Post, Service } from '@neo9/n9-node-routing';
 
 import { UsersService } from '../users/users.service';
 import { UsersUtils } from '../users/users.utils';
@@ -9,10 +8,13 @@ import { SessionsService } from './sessions.service';
 @Service()
 @JsonController('/sessions')
 export class SessionsController {
-	@Inject('logger')
+	@Inject()
 	private logger: N9Log;
 
-	constructor(private usersService: UsersService, private sessionsService: SessionsService) {}
+	constructor(
+		private usersService: UsersService,
+		private sessionsService: SessionsService,
+	) {}
 
 	/**
 	 * Sign-up a new user

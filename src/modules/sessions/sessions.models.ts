@@ -1,4 +1,4 @@
-import { IsEmail, Matches, MinLength } from 'n9-node-routing';
+import { IsEmail, Matches, MinLength } from '@neo9/n9-node-routing';
 
 import { UserEntity } from '../users/users.models';
 

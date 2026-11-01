@@ -1,21 +1,17 @@
+import { Service } from '@neo9/n9-node-routing';
 import * as jwt from 'jsonwebtoken';
-import { Service } from 'n9-node-routing';
 
+import { Conf } from '../../conf/index.models';
 import { UserEntity } from '../users/users.models';
 import { Session, TokenContent } from './sessions.models';
 
 @Service()
 export class SessionsService {
-	private static generateAccessToken(session: TokenContent): string {
-		const conf = global.conf;
-		return jwt.sign(session, conf.jwt.secret, {
-			expiresIn: conf.jwt.expiresIn,
-		});
-	}
+	constructor(private conf: Conf) {}
 
 	public generateUserSession(user: UserEntity): Session {
 		return {
-			token: SessionsService.generateAccessToken({
+			token: this.generateAccessToken({
 				userId: user._id,
 				email: user.email,
 				firstName: user.firstName,
@@ -30,5 +26,11 @@ export class SessionsService {
 				familyCodes: user.familyCodes,
 			},
 		};
+	}
+
+	private generateAccessToken(session: TokenContent): string {
+		return jwt.sign(session, this.conf.jwt.secret, {
+			expiresIn: this.conf.jwt.expiresIn,
+		});
 	}
 }

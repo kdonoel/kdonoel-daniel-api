@@ -1,9 +1,9 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'n9-node-routing';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from '@neo9/n9-node-routing';
 
 export enum KdoState {
-	'FREE' = 'free',
-	'RESERVED' = 'reserved',
-	'BOUGHT' = 'bought',
+	FREE = 'free',
+	RESERVED = 'reserved',
+	BOUGHT = 'bought',
 }
 
 export class KdoStatus {

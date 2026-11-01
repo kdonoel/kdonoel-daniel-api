@@ -1,15 +1,16 @@
-import { BaseMongoObject } from '@neo9/n9-mongo-client';
+import { BaseMongoObject } from '@neo9/n9-mongodb-client';
 import {
 	ArrayMinSize,
 	Exclude,
 	Expose,
 	IsArray,
 	IsEmail,
-	IsNotEmpty, IsOptional,
+	IsNotEmpty,
+	IsOptional,
 	IsString,
 	Matches,
 	MinLength,
-} from 'n9-node-routing';
+} from '@neo9/n9-node-routing';
 
 import { Kdo } from './kdos.models';
 

@@ -1,6 +1,6 @@
-import { MongoClient, StringMap } from '@neo9/n9-mongo-client';
-import type { Cursor, FilterQuery } from 'mongodb';
-import { N9Error, Service } from 'n9-node-routing';
+import { N9FindCursor, N9MongoDBClient, StringMap } from '@neo9/n9-mongodb-client';
+import type { Db, Filter } from '@neo9/n9-mongodb-client/mongodb';
+import { Inject, N9Error, N9Log, Service } from '@neo9/n9-node-routing';
 
 import { TokenContent } from '../sessions/sessions.models';
 import { Kdo, KdoRequestUpdate, KdoState } from './kdos.models';
@@ -10,16 +10,18 @@ import { UsersUtils } from './users.utils';
 
 @Service()
 export class UsersService {
-	private mongoClient: MongoClient<UserEntity, UserEntity>;
+	private mongoClient: N9MongoDBClient<UserEntity, UserEntity>;
 
-	constructor() {
-		this.mongoClient = new MongoClient('users', UserEntity, UserListItem, {
+	constructor(@Inject('db') db: Db, logger: N9Log) {
+		this.mongoClient = new N9MongoDBClient('users', UserEntity, UserListItem, {
 			keepHistoric: true,
+			db,
+			logger,
 		});
 	}
 
 	public async create(user: UserEntity): Promise<UserEntity> {
-		if(user.password) {
+		if (user.password) {
 			user.password = await UsersUtils.HASH_PASSWORD(user.password);
 		}
 		return await this.mongoClient.insertOne(user, 'none');
@@ -51,7 +53,7 @@ export class UsersService {
 		return await this.mongoClient.findOneByKey(email, 'email', projection);
 	}
 
-	public find(query: FilterQuery<UserEntity>, projection: object = {}): Cursor<UserEntity> {
+	public find(query: Filter<UserEntity>, projection: object = {}): N9FindCursor<UserEntity> {
 		return this.mongoClient.find(query, 0, 0, { firstName: 1, lastName: 1 }, projection);
 	}
 

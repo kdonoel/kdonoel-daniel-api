@@ -1,8 +1,10 @@
 import { Conf } from './index.models';
 
 const conf: Conf = {
-	shutdown: {
-		waitDurationBeforeStop: 500,
+	n9NodeRoutingOptions: {
+		shutdown: {
+			waitDurationBeforeStop: 500,
+		},
 	},
 	mongo: {
 		url: 'mongodb://mongo-kdos:27017/kdos',
