@@ -90,18 +90,8 @@ export class UsersController {
 		@CurrentUser({ required: true }) tokenContent: TokenContent,
 		@Param('id') userId: string,
 	): Promise<UserEntity> {
-		// Check if user exists
-		const userRequested = await this.usersService.getById(userId, tokenContent.userId);
-		if (!userRequested) {
-			throw new N9Error('user-not-found', 404);
-		}
 		await this.usersService.existsById(tokenContent.userId);
-		const isItself = userId === tokenContent.userId;
-
-		userRequested.kdos = userRequested.kdos?.filter((k) => (isItself ? !k.isSurprise : true));
-
-		// Send back the user
-		return _.omit(userRequested, 'password');
+		return await this.getUserView(userId, tokenContent.userId);
 	}
 
 	@Post('/:userId([0-9a-f]{24})/kdos')
@@ -112,7 +102,8 @@ export class UsersController {
 		@Param('userId') userId: string,
 	): Promise<UserEntity> {
 		await this.usersService.existsById(tokenContent.userId);
-		return await this.usersService.addKdo(kdo, userId, tokenContent);
+		await this.usersService.addKdo(kdo, userId, tokenContent);
+		return await this.getUserView(userId, tokenContent.userId);
 	}
 
 	@Put('/:userId([0-9a-f]{24})/kdos/:index')
@@ -125,7 +116,7 @@ export class UsersController {
 	): Promise<UserEntity> {
 		await this.usersService.existsById(tokenContent.userId);
 		await this.usersService.editKdo(kdo, userId, index, tokenContent);
-		return await this.usersService.getById(userId, tokenContent.userId);
+		return await this.getUserView(userId, tokenContent.userId);
 	}
 
 	@Get()
@@ -193,7 +184,7 @@ export class UsersController {
 		await this.usersService.existsById(tokenContent.userId);
 
 		await this.usersService.setKdoStatus(userId, index, status, tokenContent);
-		return this.usersService.getById(userId, tokenContent.userId);
+		return await this.getUserView(userId, tokenContent.userId);
 	}
 
 	@Post('/init/password')
@@ -202,5 +193,17 @@ export class UsersController {
 
 		await this.usersService.updateLastSession(user._id);
 		return this.sessionsService.generateUserSession(user);
+	}
+
+	/**
+	 * The user as seen by the viewer: never the password, and the owner of the list sees neither the
+	 * surprises nor the statuses of its ideas (removed by the projection)
+	 */
+	private async getUserView(userId: string, viewerId: string): Promise<UserEntity> {
+		const user = await this.usersService.getById(userId, viewerId);
+		if (userId === viewerId) {
+			user.kdos = user.kdos?.filter((k) => !k.isSurprise);
+		}
+		return _.omit(user, 'password');
 	}
 }
