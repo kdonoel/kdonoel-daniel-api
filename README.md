@@ -2,16 +2,16 @@
 
 1. Install all dependencies:
 
-   `npm install`
+   `yarn install`
 
 2. Run the project:
 
-   `npm start`
+   `yarn dev`
 
 3. Open in browser:
 
-   `http://localhost:3000/`
+   `http://localhost:6686/`
 
-This project targets ES6, node 18+.
+This project targets Node.js 26+.
 
-To get a mongodb locally : `docker run --name mongo-kdos -p 27017:27017 mongo:5.0.13-focal`
+To get a mongodb locally : `docker run --name mongo-kdos -p 27017:27017 mongo:8.0.34`
