@@ -1,17 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node26/tsconfig.json",
   "compilerOptions": {
+    "rootDir": "src",
     "outDir": "dist",
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "declaration": true,
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "strict": false,
-    "esModuleInterop": false
+    "strict": false
   },
-  "include": ["src", "test"],
+  "include": ["src"],
   "exclude": []
 }

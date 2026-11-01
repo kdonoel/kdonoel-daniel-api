@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import {
 	Authorized,
 	Body,
@@ -11,7 +10,8 @@ import {
 	Put,
 	QueryParam,
 	Service,
-} from 'n9-node-routing';
+} from '@neo9/n9-node-routing';
+import * as _ from 'lodash';
 
 import { Session, TokenContent } from '../sessions/sessions.models';
 import { SessionsService } from '../sessions/sessions.service';
@@ -30,7 +30,10 @@ import { UsersUtils } from './users.utils';
 @Service()
 @JsonController('/users')
 export class UsersController {
-	constructor(private usersService: UsersService, private sessionsService: SessionsService) {}
+	constructor(
+		private usersService: UsersService,
+		private sessionsService: SessionsService,
+	) {}
 
 	/**
 	 * Sign-up a new user
@@ -61,7 +64,7 @@ export class UsersController {
 		// Add user to database
 		const user = await this.usersService.create(userBody);
 		// Send back the user created
-		return _.omit(user, 'password') as any;
+		return _.omit(user, 'password');
 	}
 
 	/**
@@ -98,7 +101,7 @@ export class UsersController {
 		userRequested.kdos = userRequested.kdos?.filter((k) => (isItself ? !k.isSurprise : true));
 
 		// Send back the user
-		return _.omit(userRequested, 'password') as any;
+		return _.omit(userRequested, 'password');
 	}
 
 	@Post('/:userId([0-9a-f]{24})/kdos')

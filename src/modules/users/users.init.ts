@@ -1,11 +1,11 @@
-import { N9Log } from 'n9-node-routing';
+import type { Db } from '@neo9/n9-mongodb-client/mongodb';
+import { Container, N9Log } from '@neo9/n9-node-routing';
 
 import { UsersUtils } from './users.utils';
 
-const usersCollection = global.db.collection('users');
-
 export default async (logger: N9Log): Promise<void> => {
-	const usersCount = await usersCollection.count({});
+	const usersCollection = Container.get<Db>('db').collection('users');
+	const usersCount = await usersCollection.countDocuments({});
 
 	if (usersCount === 0) {
 		logger.info('Insert base user');

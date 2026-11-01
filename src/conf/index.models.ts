@@ -1,32 +1,47 @@
-import { N9ConfBaseConf } from '@neo9/n9-node-conf';
-import type { MongoClientOptions } from 'mongodb';
-import { N9Log, N9NodeRouting } from 'n9-node-routing';
+import type { MongoClientOptions } from '@neo9/n9-mongodb-client/mongodb';
+import {
+	Allow,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	isStringOrNumber,
+	N9NodeRouting,
+	SecretTransformer,
+	SecretType,
+	Transform,
+	Type,
+	ValidateNested,
+} from '@neo9/n9-node-routing';
+import type { SignOptions } from 'jsonwebtoken';
 
-export interface Conf extends N9ConfBaseConf {
-	// n9-node-routing config
-	http?: N9NodeRouting.HttpOptions;
-	openapi?: N9NodeRouting.SwaggerOptions;
-	log?: N9Log.Options;
-	shutdown?: N9NodeRouting.ShutdownOptions;
-	enableLogFormatJSON?: boolean;
+export class MongoConf {
+	// Hide the password, the configuration is exposed on the /conf route
+	@IsString()
+	@Transform(SecretTransformer.GET_TRANSFORMER(SecretType.URI))
+	public url: string;
 
-	// Custom config
-	mongo?: {
-		url: string;
-		options?: MongoClientOptions;
-	};
-	bodyParser?: {
-		limit?: string;
-	};
-	metrics?: {
-		isEnabled?: boolean;
-		waitDurationMs?: number;
-	};
-	jwt?: {
-		secret: string;
-		expiresIn: string | number;
-	};
-	env?: string;
-	name?: string;
-	version?: string;
+	@IsOptional()
+	@Allow()
+	public options?: MongoClientOptions;
+}
+
+export class JwtConf {
+	// Never expose the secret, the configuration is exposed on the /conf route
+	@IsString()
+	@IsNotEmpty()
+	@Transform(SecretTransformer.GET_TRANSFORMER(SecretType.INVISIBLE))
+	public secret: string;
+
+	@isStringOrNumber()
+	public expiresIn: SignOptions['expiresIn'];
+}
+
+export class Conf extends N9NodeRouting.N9NodeRoutingBaseConf {
+	@ValidateNested()
+	@Type(() => MongoConf)
+	public mongo?: MongoConf;
+
+	@ValidateNested()
+	@Type(() => JwtConf)
+	public jwt?: JwtConf;
 }

@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty } from 'n9-node-routing';
+import { IsEnum, IsNotEmpty } from '@neo9/n9-node-routing';
 
 import { KdoState } from './kdos.models';
 
