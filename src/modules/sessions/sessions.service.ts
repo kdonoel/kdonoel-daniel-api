@@ -24,8 +24,13 @@ export class SessionsService {
 				firstName: user.firstName,
 				lastName: user.lastName,
 				familyCodes: user.familyCodes,
+				isAdmin: this.isAdmin(user),
 			},
 		};
+	}
+
+	public isAdmin(user: UserEntity): boolean {
+		return this.conf.adminEmails.includes(user.email.toLowerCase());
 	}
 
 	private generateAccessToken(session: TokenContent): string {

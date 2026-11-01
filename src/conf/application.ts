@@ -23,6 +23,10 @@ const conf: Conf = {
 		brevoApiKey: process.env.BREVO_API_KEY,
 		senderEmail: process.env.EMAIL_SENDER_EMAIL,
 	},
+	adminEmails: (process.env.ADMIN_EMAILS ?? '')
+		.split(',')
+		.map((email) => email.trim().toLowerCase())
+		.filter(Boolean),
 };
 
 export default conf;

@@ -6,13 +6,14 @@ import { Inject, N9Error, N9Log, Service } from '@neo9/n9-node-routing';
 
 import { Conf } from '../../conf/index.models';
 import { EmailsService } from '../emails/emails.service';
-import { LOGIN_LINK_EMAIL } from '../emails/emails.templates';
+import { INVITATION_EMAIL, LOGIN_LINK_EMAIL } from '../emails/emails.templates';
 import { UserEntity } from '../users/users.models';
 import { LoginToken } from './login-links.models';
 import { LoginLinksUtils } from './login-links.utils';
 
 const HOUR_MS = 3_600_000;
 const LINK_VALIDITY_MS = HOUR_MS;
+const INVITATION_VALIDITY_MS = 60 * 24 * HOUR_MS;
 // Links asked per user and per day, so that nobody can flood a mailbox
 const MAX_LINKS_PER_DAY = 5;
 // The expired links can still ask for a new one, even those of the last Christmas
@@ -57,9 +58,19 @@ export class LoginLinksService {
 		);
 	}
 
+	public async sendInvitation(user: UserEntity): Promise<void> {
+		const expiresAt = new Date(Date.now() + INVITATION_VALIDITY_MS);
+		const url = await this.createLink(user, expiresAt);
+		await this.emailsService.send(
+			user,
+			INVITATION_EMAIL({ firstName: user.firstName, url, expiresAt }),
+		);
+	}
+
 	/**
-	 * The links can be used several times until their expiration: some email filters open the links
-	 * before the users. An expired link can still be used to send a new one.
+	 * The links can be used several times until their expiration: the invitation stays in the mailbox
+	 * to come back to the site, and some email filters open the links before the users. An expired
+	 * link can still be used to send a new one.
 	 */
 	public async getUserId(token: string, allowExpired: boolean = false): Promise<string> {
 		const loginToken = await this.mongoClient.findOneByKey(
