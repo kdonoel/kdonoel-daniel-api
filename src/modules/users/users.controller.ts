@@ -13,27 +13,17 @@ import {
 } from '@neo9/n9-node-routing';
 import * as _ from 'lodash';
 
-import { Session, TokenContent } from '../sessions/sessions.models';
-import { SessionsService } from '../sessions/sessions.service';
+import { TokenContent } from '../sessions/sessions.models';
 import { KdoRequestCreate, KdoRequestUpdate } from './kdos.models';
 import { StatusRequest } from './kdos-status-request.models';
-import {
-	PasswordInitRequest,
-	PasswordResetRequest,
-	UserEntity,
-	UserListItem,
-	UserRequestCreate,
-} from './users.models';
+import { PasswordResetRequest, UserEntity, UserListItem, UserRequestCreate } from './users.models';
 import { UsersService } from './users.service';
 import { UsersUtils } from './users.utils';
 
 @Service()
 @JsonController('/users')
 export class UsersController {
-	constructor(
-		private usersService: UsersService,
-		private sessionsService: SessionsService,
-	) {}
+	constructor(private usersService: UsersService) {}
 
 	/**
 	 * Sign-up a new user
@@ -187,14 +177,6 @@ export class UsersController {
 		return await this.getUserView(userId, tokenContent.userId);
 	}
 
-	@Post('/init/password')
-	public async initPassword(@Body() passwordInitRequest: PasswordInitRequest): Promise<Session> {
-		const user = await this.usersService.initPassword(passwordInitRequest);
-
-		await this.usersService.updateLastSession(user._id);
-		return this.sessionsService.generateUserSession(user);
-	}
-
 	/**
 	 * The user as seen by the viewer: never the password, and the owner of the list sees neither the
 	 * surprises nor the statuses of its ideas (removed by the projection)
@@ -203,6 +185,7 @@ export class UsersController {
 		const user = await this.usersService.getById(userId, viewerId);
 		if (userId === viewerId) {
 			user.kdos = user.kdos?.filter((k) => !k.isSurprise);
+			user.hasPassword = !!user.password;
 		}
 		return _.omit(user, 'password');
 	}
