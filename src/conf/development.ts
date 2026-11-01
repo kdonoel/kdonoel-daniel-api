@@ -11,7 +11,8 @@ const conf: Conf = {
 	},
 	jwt: {
 		secret: 'secret_key',
-		expiresIn: '30 days',
+		// The site is used once a year: each visit extends the session, see POST /sessions/refresh
+		expiresIn: '400 days',
 	},
 };
 
