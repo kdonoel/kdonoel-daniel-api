@@ -55,6 +55,8 @@ export class UserEntity extends BaseMongoObject {
 	public accessToken?: string;
 	public kdos?: Kdo[];
 	public familyCodes: string[];
+	// Only in the responses, for the user itself
+	public hasPassword?: boolean;
 }
 
 export class UserListItem extends BaseMongoObject {
@@ -75,14 +77,4 @@ export class PasswordResetRequest {
 	@MinLength(8)
 	@Matches(/^(?=.*[a-z])(?=.*\d).{8,}$/i)
 	public newPassword: string;
-}
-
-export class PasswordInitRequest {
-	@IsEmail()
-	@Expose()
-	public email: string;
-
-	@MinLength(8)
-	@Matches(/^(?=.*[a-z])(?=.*\d).{8,}$/i)
-	public pwd: string;
 }

@@ -14,6 +14,10 @@ const conf: Conf = {
 		// The site is used once a year: each visit extends the session, see POST /sessions/refresh
 		expiresIn: '400 days',
 	},
+	webUrl: 'http://localhost:4200',
+	emails: {
+		senderEmail: 'kdos-noel@example.com',
+	},
 };
 
 export default conf;
