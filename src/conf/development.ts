@@ -18,6 +18,8 @@ const conf: Conf = {
 	emails: {
 		senderEmail: 'kdos-noel@example.com',
 	},
+	// The admin inserted in an empty database
+	adminEmails: ['test-kdonoel@yopmail.com'],
 };
 
 export default conf;

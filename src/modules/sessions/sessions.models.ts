@@ -1,7 +1,5 @@
 import { IsEmail, Matches, MinLength } from '@neo9/n9-node-routing';
 
-import { UserEntity } from '../users/users.models';
-
 export class CreateSessionBody {
 	@IsEmail()
 	public email: string;
@@ -11,9 +9,19 @@ export class CreateSessionBody {
 	public password?: string;
 }
 
+export interface SessionProfile {
+	_id: string;
+	email: string;
+	firstName: string;
+	lastName: string;
+	familyCodes: string[];
+	// The admins send the invitations, see ADMIN_EMAILS
+	isAdmin: boolean;
+}
+
 export interface Session {
 	token: string;
-	profile: UserEntity;
+	profile: SessionProfile;
 }
 
 export interface TokenContent {

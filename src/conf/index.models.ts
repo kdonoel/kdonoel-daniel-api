@@ -1,4 +1,5 @@
 import {
+	IsArray,
 	IsEmail,
 	IsNotEmpty,
 	IsString,
@@ -61,4 +62,10 @@ export class Conf extends N9NodeRouting.N9NodeRoutingBaseConf {
 	@ValidateNested()
 	@Type(() => EmailsConf)
 	public emails?: EmailsConf;
+
+	// The admins send the invitations, hidden on the /conf route
+	@IsArray()
+	@IsEmail({}, { each: true })
+	@Transform(SecretTransformer.GET_TRANSFORMER(SecretType.INVISIBLE))
+	public adminEmails?: string[];
 }
