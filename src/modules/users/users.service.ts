@@ -93,9 +93,10 @@ export class UsersService {
 		editor: TokenContent,
 	): Promise<void> {
 		const userToUpdate = await this.getById(userId);
+		const kdoIndex = this.getKdoIndex(userToUpdate.kdos, index, userId === editor.userId);
 
-		userToUpdate.kdos[index] = {
-			...userToUpdate.kdos[index],
+		userToUpdate.kdos[kdoIndex] = {
+			...userToUpdate.kdos[kdoIndex],
 			...kdoRequestUpdate,
 		};
 
@@ -109,16 +110,17 @@ export class UsersService {
 		editor: TokenContent,
 	): Promise<void> {
 		const userToUpate = await this.getById(userId);
+		const kdoIndex = this.getKdoIndex(userToUpate.kdos, index, userId === editor.userId);
 
 		if (
-			userToUpate.kdos[index].status?.code !== KdoState.FREE &&
-			userToUpate.kdos[index].status?.userId &&
-			userToUpate.kdos[index].status?.userId !== editor.userId
+			userToUpate.kdos[kdoIndex].status?.code !== KdoState.FREE &&
+			userToUpate.kdos[kdoIndex].status?.userId &&
+			userToUpate.kdos[kdoIndex].status?.userId !== editor.userId
 		) {
 			throw new N9Error('can-t-update-status', 401);
 		}
-		userToUpate.kdos[index] = {
-			...userToUpate.kdos[index],
+		userToUpate.kdos[kdoIndex] = {
+			...userToUpate.kdos[kdoIndex],
 			status: {
 				code: statusRequestUpdate.status,
 				userId: editor.userId,
@@ -142,6 +144,18 @@ export class UsersService {
 			},
 			user._id,
 		);
+	}
+
+	/**
+	 * The owner of a list doesn't see its surprises, so the index it sends is the one of the idea
+	 * among the ideas which are not surprises
+	 */
+	private getKdoIndex(kdos: Kdo[] = [], index: number, isOwner: boolean): number {
+		const kdoIndex = isOwner ? kdos.flatMap((k, i) => (k.isSurprise ? [] : [i]))[index] : index;
+		if (!kdos[kdoIndex]) {
+			throw new N9Error('kdo-not-found', 404, { index });
+		}
+		return kdoIndex;
 	}
 
 	private async updateById(
