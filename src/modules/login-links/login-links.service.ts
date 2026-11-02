@@ -13,7 +13,6 @@ import { LoginLinksUtils } from './login-links.utils';
 
 const HOUR_MS = 3_600_000;
 const LINK_VALIDITY_MS = HOUR_MS;
-const INVITATION_VALIDITY_MS = 60 * 24 * HOUR_MS;
 // Links asked per user and per day, so that nobody can flood a mailbox
 const MAX_LINKS_PER_DAY = 5;
 // The expired links can still ask for a new one, even those of the last Christmas
@@ -59,7 +58,11 @@ export class LoginLinksService {
 	}
 
 	public async sendInvitation(user: UserEntity): Promise<void> {
-		const expiresAt = new Date(Date.now() + INVITATION_VALIDITY_MS);
+		// Until the end of the coming Christmas day in Paris, which is at UTC+1 in December
+		const expiresAt = new Date(Date.UTC(new Date().getUTCFullYear(), 11, 25, 22, 59, 59, 999));
+		if (expiresAt.getTime() <= Date.now()) {
+			expiresAt.setUTCFullYear(expiresAt.getUTCFullYear() + 1);
+		}
 		const url = await this.createLink(user, expiresAt);
 		await this.emailsService.send(
 			user,

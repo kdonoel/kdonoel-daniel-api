@@ -55,19 +55,16 @@ export function INVITATION_EMAIL(params: {
 	url: string;
 	expiresAt: Date;
 }): EmailContent {
-	const year = new Date().getFullYear();
-	const parts = new Intl.DateTimeFormat('fr-FR', {
+	// The Christmas of the invitation
+	const year = params.expiresAt.getUTCFullYear();
+	const until = new Intl.DateTimeFormat('fr-FR', {
 		day: 'numeric',
 		month: 'long',
 		year: 'numeric',
 		timeZone: 'Europe/Paris',
-	}).formatToParts(params.expiresAt);
-	const part = (type: Intl.DateTimeFormatPartTypes): string =>
-		parts.find((p) => p.type === type)?.value;
-	// "1er janvier 2027", "14 janvier 2027"
-	const until = `${part('day') === '1' ? '1er' : part('day')} ${part('month')} ${part('year')}`;
+	}).format(params.expiresAt);
 	const intro = typography(
-		`Les listes d'idées de cadeaux de Noël ${year} sont ouvertes : note les cadeaux qui te feraient plaisir et découvre les idées de ta famille.`,
+		`Les listes d'idées de cadeaux de Noël ${year} sont ouvertes : note les cadeaux qui te feraient plaisir et découvre les idées de la famille.`,
 	);
 	const validity = typography(
 		`Pas besoin de mot de passe : ce lien te connecte directement. Il est personnel et fonctionne jusqu'au ${until}, garde cet e-mail pour revenir sur le site.`,
