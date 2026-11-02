@@ -28,12 +28,12 @@ export function LOGIN_LINK_EMAIL(params: {
 		minute: '2-digit',
 		timeZone: 'Europe/Paris',
 	}).format(params.expiresAt);
-	const validity = `Ce lien fonctionne jusqu'à ${time}. Si tu n'as rien demandé, tu peux ignorer cet e-mail.`;
+	const validity = `Ce lien fonctionne jusqu'à ${time}. Si tu n'as rien demandé, tu peux ignorer cet email.`;
 	return {
 		subject: 'Ton lien de connexion à Kdos Noël',
 		html: `<div style="max-width: 480px; margin: 0 auto; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #212529">
 	<p>Bonjour ${escapeHtml(params.firstName)},</p>
-	<p>${typography("Clique sur le bouton pour te connecter aux listes d'idées de cadeaux de ta famille :")}</p>
+	<p>${typography("Clique sur le bouton pour te connecter aux listes d'idées de cadeaux de la famille :")}</p>
 	<p style="margin: 28px 0; text-align: center">
 		<a href="${escapeHtml(params.url)}" style="display: inline-block; padding: 14px 28px; border-radius: 8px; background-color: #2b4c9c; color: #ffffff; font-size: 18px; font-weight: bold; text-decoration: none">Me connecter</a>
 	</p>
@@ -42,7 +42,7 @@ export function LOGIN_LINK_EMAIL(params: {
 		text: [
 			`Bonjour ${params.firstName},`,
 			'',
-			typography("Pour te connecter aux listes d'idées de cadeaux de ta famille, ouvre ce lien :"),
+			typography("Pour te connecter aux listes d'idées de cadeaux de la famille, ouvre ce lien :"),
 			params.url,
 			'',
 			validity,
@@ -67,7 +67,7 @@ export function INVITATION_EMAIL(params: {
 		`Les listes d'idées de cadeaux de Noël ${year} sont ouvertes : note les cadeaux qui te feraient plaisir et découvre les idées de la famille.`,
 	);
 	const validity = typography(
-		`Pas besoin de mot de passe : ce lien te connecte directement. Il est personnel et fonctionne jusqu'au ${until}, garde cet e-mail pour revenir sur le site.`,
+		`Pas besoin de mot de passe : ce lien te connecte directement. Il est personnel et fonctionne jusqu'au ${until}, garde cet email pour revenir sur le site.`,
 	);
 	return {
 		subject: `Les listes de cadeaux de Noël ${year} sont ouvertes`,
