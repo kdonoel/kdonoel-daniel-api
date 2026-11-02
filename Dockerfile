@@ -1,7 +1,9 @@
-FROM node:26.12.1-trixie-slim AS builder
-
 # Yarn is no longer bundled with the official Node.js images since Node.js 25
 ARG YARN_VERSION=1.22.22
+
+FROM node:26.12.1-trixie-slim AS builder
+
+ARG YARN_VERSION
 RUN npm install --global yarn@${YARN_VERSION}
 
 WORKDIR /home/app
@@ -35,7 +37,7 @@ COPY --from=builder ${YARN_CACHE_PATH} ${YARN_CACHE_PATH}
 RUN node -e "const package = require('./package.json'); delete package.devDependencies; require('fs').writeFileSync('package.json', JSON.stringify(package, null, 2));"
 
 # Yarn is only needed to remove the dev dependencies, it is uninstalled afterwards
-ARG YARN_VERSION=1.22.22
+ARG YARN_VERSION
 RUN npm install --global yarn@${YARN_VERSION} \
   && yarn install --offline \
   && rm -rf test \
