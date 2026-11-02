@@ -1,7 +1,5 @@
 .git
 node_modules
 dist
-coverage
-.nyc_output
 openapi-documentation.json
 **/*local.ts

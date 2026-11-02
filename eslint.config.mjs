@@ -3,16 +3,14 @@ import eslint from '@eslint/js';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-	globalIgnores(['dist/', 'coverage/', '.nyc_output/']),
+	globalIgnores(['dist/']),
 	{
 		files: ['**/*.ts'],
 		extends: [eslint.configs.recommended, tseslint.configs.recommendedTypeChecked],
 		languageOptions: {
-			globals: globals.node,
 			parserOptions: {
 				projectService: true,
 				tsconfigRootDir: import.meta.dirname,
@@ -43,10 +41,8 @@ export default defineConfig(
 			'@typescript-eslint/restrict-template-expressions': 'off',
 			'@typescript-eslint/unbound-method': 'off',
 
-			'curly': 'error',
 			'no-console': 'error',
 			'object-shorthand': ['error', 'always'],
-			'prefer-arrow-callback': 'error',
 			'radix': ['error', 'always'],
 			'simple-import-sort/imports': 'error',
 			'simple-import-sort/exports': 'error',

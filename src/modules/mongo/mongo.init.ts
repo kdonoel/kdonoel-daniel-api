@@ -4,10 +4,7 @@ import { Container, N9Log, N9NodeRouting } from '@neo9/n9-node-routing';
 import { Conf } from '../../conf/index.models';
 
 export default async (logger: N9Log, conf: Conf): Promise<void> => {
-	const { db, mongodbClient } = await MongoUtils.CONNECT(conf.mongo.url, {
-		logger,
-		nativeDriverOptions: conf.mongo.options,
-	});
+	const { db, mongodbClient } = await MongoUtils.CONNECT(conf.mongo.url, { logger });
 	Container.set('db', db);
 
 	const pingDbs: N9NodeRouting.PingDb[] = Container.get('pingDbs');

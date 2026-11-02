@@ -1,8 +1,5 @@
-import type { MongoClientOptions } from '@neo9/n9-mongodb-client/mongodb';
 import {
-	Allow,
 	IsNotEmpty,
-	IsOptional,
 	IsString,
 	isStringOrNumber,
 	N9NodeRouting,
@@ -19,10 +16,6 @@ export class MongoConf {
 	@IsString()
 	@Transform(SecretTransformer.GET_TRANSFORMER(SecretType.URI))
 	public url: string;
-
-	@IsOptional()
-	@Allow()
-	public options?: MongoClientOptions;
 }
 
 export class JwtConf {

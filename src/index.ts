@@ -10,7 +10,7 @@ import { Conf } from './conf/index.models';
 import { SessionsUtils } from './modules/sessions/sessions.utils';
 
 // Start method
-async function start(confOverride: Partial<Conf> = {}): Promise<N9NodeRouting.ReturnObject<Conf>> {
+async function start(): Promise<N9NodeRouting.ReturnObject<Conf>> {
 	// Filled by the mongo init module once connected
 	const pingDbs: N9NodeRouting.PingDb[] = [];
 	Container.set('pingDbs', pingDbs);
@@ -27,17 +27,6 @@ async function start(confOverride: Partial<Conf> = {}): Promise<N9NodeRouting.Re
 		conf: {
 			n9NodeConf: {
 				path: join(__dirname, 'conf'),
-				extendConfig: {
-					key: {
-						name: 'starterApi',
-					},
-					path: {
-						relative: './env/env.yaml',
-					},
-				},
-				override: {
-					value: confOverride,
-				},
 			},
 			validation: {
 				isEnabled: true,
@@ -67,20 +56,14 @@ async function start(confOverride: Partial<Conf> = {}): Promise<N9NodeRouting.Re
 	});
 }
 
-// Start server if not in test mode
-/* istanbul ignore if */
-if (process.env.NODE_ENV !== 'test') {
-	start()
-		.then(({ logger }) => {
-			logger.info('Launch SUCCESS !');
-		})
-		.catch((e) => {
-			// eslint-disable-next-line no-console
-			console.error(`Error on launch : `, {
-				errString: safeStringify(e),
-			});
-			throw e;
+start()
+	.then(({ logger }) => {
+		logger.info('Launch SUCCESS !');
+	})
+	.catch((e) => {
+		// eslint-disable-next-line no-console
+		console.error(`Error on launch : `, {
+			errString: safeStringify(e),
 		});
-}
-
-export default start;
+		throw e;
+	});
