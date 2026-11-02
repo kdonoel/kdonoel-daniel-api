@@ -15,8 +15,18 @@ const conf: Conf = {
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET,
-		expiresIn: '30 days',
+		// The site is used once a year: each visit extends the session, see POST /sessions/refresh
+		expiresIn: '400 days',
 	},
+	webUrl: process.env.WEB_URL,
+	emails: {
+		brevoApiKey: process.env.BREVO_API_KEY,
+		senderEmail: process.env.EMAIL_SENDER_EMAIL,
+	},
+	adminEmails: (process.env.ADMIN_EMAILS ?? '')
+		.split(',')
+		.map((email) => email.trim().toLowerCase())
+		.filter(Boolean),
 };
 
 export default conf;

@@ -5,7 +5,7 @@ import { Inject, N9Error, N9Log, Service } from '@neo9/n9-node-routing';
 import { TokenContent } from '../sessions/sessions.models';
 import { Kdo, KdoRequestUpdate, KdoState } from './kdos.models';
 import { StatusRequest as StatusRequestUpdate } from './kdos-status-request.models';
-import { PasswordInitRequest, UserEntity, UserListItem } from './users.models';
+import { UserEntity, UserListItem } from './users.models';
 import { UsersUtils } from './users.utils';
 
 @Service()
@@ -131,18 +131,22 @@ export class UsersService {
 		await this.updateById(userId, userToUpate, editor.userId);
 	}
 
-	public async initPassword(passwordInitRequest: PasswordInitRequest): Promise<UserEntity> {
-		const user = await this.getByEmail(passwordInitRequest.email);
-		if (!user) throw new N9Error('user-not-found', 404);
-		if (user.password) throw new N9Error('password-already-set', 401);
-
-		return await this.updateById(
-			user._id,
-			{
-				...user,
-				password: await UsersUtils.HASH_PASSWORD(passwordInitRequest.pwd),
-			},
-			user._id,
+	/**
+	 * Users found with their names, whatever the case, the accents and the hyphens
+	 */
+	public async findByNames(firstName: string, lastName: string): Promise<UserEntity[]> {
+		const normalize = (name: string): string =>
+			name
+				.normalize('NFD')
+				.replace(/\p{Diacritic}/gu, '')
+				.replace(/[-\s]+/g, ' ')
+				.trim()
+				.toLowerCase();
+		const users = await this.find({}, { kdos: 0, password: 0 }).toArray();
+		return users.filter(
+			(user) =>
+				normalize(user.firstName) === normalize(firstName) &&
+				normalize(user.lastName) === normalize(lastName),
 		);
 	}
 
