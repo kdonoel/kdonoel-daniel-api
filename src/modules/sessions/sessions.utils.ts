@@ -26,6 +26,8 @@ export class SessionsUtils {
 	public static SET_JWT_LOADER(conf: Conf, log: N9Log, app: Express): void {
 		if (conf.jwt) {
 			app.use((req: Request, res: Response, next: NextFunction): void => {
+				// Only a verified token sets the session header, which is trusted by the router
+				delete req.headers.session;
 				try {
 					const token = req.headers['x-jwt-token'] as string;
 					if (token && typeof token === 'string') {
